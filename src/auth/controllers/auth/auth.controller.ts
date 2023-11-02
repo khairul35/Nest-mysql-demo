@@ -1,21 +1,14 @@
 import {
   Body,
   Controller,
-  Delete,
-  Get,
   Headers,
   HttpException,
   HttpStatus,
-  Param,
-  ParseIntPipe,
   Post,
-  Put,
 } from '@nestjs/common';
-import { CreateUserDto } from 'src/users/dto/CreateUser.dto';
 import { AuthService } from 'src/auth/services/auth/auth.service';
 import { UsersService } from 'src/users/services/users/users.service';
 import { compare } from 'bcrypt';
-import { UpdateUserDto } from 'src/users/dto/UpdateUser.dto';
 import jwt from 'jsonwebtoken';
 import { LogInDto } from 'src/auth/dto/LogIn.dto';
 import { decodeAccessToken } from 'src/utils/middleware/decode-token';
@@ -51,6 +44,7 @@ export class AuthController {
         lastName: initialUser.lastName,
         lastLoginDate: Date.now(),
       },
+      SECRET_KEY,
       { expiresIn: '60m' },
     );
 
@@ -64,6 +58,7 @@ export class AuthController {
         lastLoginDate: Date.now(),
         accessToken,
       },
+      SECRET_KEY,
     );
   
     await this.authService.login(initialUser.id, accessToken, refreshToken);
