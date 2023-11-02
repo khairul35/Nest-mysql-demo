@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/typeorm/entities/User';
 import { CreateUserParams, UpdateUserParams } from 'src/utils/types';
 import { Repository } from 'typeorm';
+import { UserMapper } from '../../mapper/User';
 
 @Injectable()
 export class UsersService {
@@ -10,12 +11,16 @@ export class UsersService {
     @InjectRepository(User) private UserRepository: Repository<User>,
   ) {}
 
-  findUsers() {
-    return this.UserRepository.find();
+  async findUsers() {
+    return (await this.UserRepository.find()).map(UserMapper);
   }
 
-  findUserById(id: number) {
-    return this.UserRepository.findOne({ where: { id } });
+  async findUserById(id: number) {
+    return UserMapper(await this.UserRepository.findOne({ where: { id } }));
+  }
+
+  async findUserByUsername(username: string) {
+    return UserMapper(await this.UserRepository.findOne({ where: { username } }));
   }
 
   createUser(userDetails: CreateUserParams) {
